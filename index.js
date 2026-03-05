@@ -4,9 +4,9 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Render-এর সেশন সচল রাখার জন্য সার্ভার
-app.get("/", (req, res) => res.send("Bot is Running and Active!"));
-app.listen(port, () => console.log(`Server listening at http://localhost:${port}`));
+// সার্ভার সচল রাখার জন্য (Render & UptimeRobot এর জন্য)
+app.get("/", (req, res) => res.send("Bot is Active and Ready!"));
+app.listen(port, () => console.log(`Server running on port ${port}`));
 
 // AppState রিড করা
 const config = {
@@ -16,17 +16,17 @@ const config = {
 login({appState: config.appState}, (err, api) => {
     if(err) return console.error("Login Error:", err);
 
-    api.setOptions({listenEvents: true, selfListen: false}); // selfListen: false মানে নিজের মেসেজে রিপ্লাই দিবে না
+    api.setOptions({listenEvents: true, selfListen: false});
 
     api.listenMqtt((err, message) => {
         if(err) return console.error("Listen Error:", err);
         if(!message.body) return;
 
-        const msg = message.body.toLowerCase();
+        const msg = message.body.toLowerCase().trim();
         const threadID = message.threadID;
 
         // --- আপনার সব টেক্সট কন্ডিশন ---
-        if (msg.includes("hi") || msg.includes("hello")) {
+        if (msg === "hi" || msg === "hello" || msg === "হাই" || msg === "হ্যালো") {
             api.sendMessage("Hi Hello না করে কাজের কথা বলো আমার বস রেগে যাবে (Hridoy Chowdhury) My Boss 🇧🇩🙂", threadID);
         } 
         else if (msg === "oi" || msg === "ওই") {
@@ -44,7 +44,7 @@ login({appState: config.appState}, (err, api) => {
         else if (msg.includes("hridoy") || msg.includes("হৃদয়")) {
             api.sendMessage("ওই হালা কি বলিস বস আমার Hridoy Chowdhury 🥰", threadID);
         }
-        else if (msg.includes("kemon acho") || msg.includes("কেমন আছো") || msg.includes("kemon achen")) {
+        else if (msg.includes("kemon acho") || msg.includes("কেমন আছো")) {
             api.sendMessage("Hmm Valo Achi Baby Tmi kemon acho", threadID);
         }
         else if (msg.includes("ki koro") || msg.includes("কি করো")) {
